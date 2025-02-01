@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Component } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from './components/header';
+import Footer from './components/footer';
+import SearchBlock from './components/SearchBlock';
+import Bord from './components/Bord';
+import ErrorBoundary from './components/ErrorBoundary';
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface AppState{ 
+  listPokemons: { name: string; description?: string }[];
+  isLoading: boolean;
+  error: string | null;
 }
 
-export default App
+class App extends Component<{},AppState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      listPokemons: [],
+      isLoading: false,
+      error: null,
+    };
+  }
+
+  fetchResults = (query: string = '') => {
+    this.setState({ isLoading: true, error: null });
+
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=0`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Ошибка запроса к API');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({ listPokemons: data.results, isLoading: false });
+      })
+      .catch((error) => {
+        this.setState({ error: error.message, isLoading: false });
+      });
+  };
+
+  componentDidMount() {
+    const savedQuery = localStorage.getItem('searchQuery') || '';
+    this.fetchResults(savedQuery);
+  }
+
+  render(): JSX.Element {
+    return (
+      <ErrorBoundary>
+        <Header />
+        <SearchBlock onSearch={this.fetchResults} />
+        <Bord />
+        <Footer />
+      </ErrorBoundary>
+    );
+  }
+}
+
+export default App;
