@@ -1,0 +1,10 @@
+.header {
+    background-color: #ffcc00;
+    color: #ff0000;
+    font-family: 'Pokemon Solid', sans-serif;
+    text-align: center;
+    padding: 20px;
+    font-size: 2rem;
+    text-transform: uppercase;
+    border-bottom: 5px solid #ff0000;
+  }

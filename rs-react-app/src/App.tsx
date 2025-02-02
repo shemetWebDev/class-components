@@ -1,29 +1,35 @@
 import { Component } from 'react';
 
-import Header from './components/header';
-import Footer from './components/footer';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import SearchBlock from './components/SearchBlock';
 import Bord from './components/Bord';
 import ErrorBoundary from './components/ErrorBoundary';
 
-interface AppState{ 
-  listPokemons: { name: string; description?: string }[];
-  isLoading: boolean;
-  error: string | null;
+interface Pokemon {
+  name: string;
 }
 
-class App extends Component<{},AppState> {
+interface AppState {
+  listPokemons: Pokemon[];
+  isLoading: boolean;
+  error: string | null;
+  firstSearch: boolean;
+}
+
+class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
       listPokemons: [],
       isLoading: false,
       error: null,
+      firstSearch: false,
     };
   }
 
   fetchResults = (query: string = '') => {
-    this.setState({ isLoading: true, error: null });
+    this.setState({ isLoading: true, error: null, firstSearch: true });
 
     fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=0`)
       .then((response) => {
@@ -33,24 +39,35 @@ class App extends Component<{},AppState> {
         return response.json();
       })
       .then((data) => {
-        this.setState({ listPokemons: data.results, isLoading: false });
+        let filteredPokemons = data.results as Pokemon[];
+
+        if (query) {
+          filteredPokemons = filteredPokemons.filter((pokemon) =>
+            pokemon.name.toLowerCase().includes(query.toLowerCase())
+          );
+        }
+
+        // Обновляем состояние с результатами
+        this.setState({ listPokemons: filteredPokemons, isLoading: false });
       })
       .catch((error) => {
         this.setState({ error: error.message, isLoading: false });
       });
   };
 
-  componentDidMount() {
-    const savedQuery = localStorage.getItem('searchQuery') || '';
-    this.fetchResults(savedQuery);
-  }
-
   render(): JSX.Element {
+    const { listPokemons, isLoading, error, firstSearch } = this.state;
     return (
       <ErrorBoundary>
         <Header />
         <SearchBlock onSearch={this.fetchResults} />
-        <Bord />
+        {firstSearch && (
+          <Bord
+            listPokemons={listPokemons}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
         <Footer />
       </ErrorBoundary>
     );

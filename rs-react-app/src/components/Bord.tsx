@@ -5,7 +5,6 @@ interface BordProps {
   error: string | null;
 }
 
-
 class Bord extends Component<BordProps> {
   render(): JSX.Element {
     const { listPokemons, isLoading, error } = this.props;
@@ -22,7 +21,6 @@ class Bord extends Component<BordProps> {
           listPokemons.map((item, index) => (
             <div key={index} className="card">
               <h3>{item.name}</h3>
-              <p>{item.description || 'Нет описания'}</p>
             </div>
           ))
         ) : (
