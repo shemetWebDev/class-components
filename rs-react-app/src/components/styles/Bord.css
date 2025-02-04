@@ -1,0 +1,14 @@
+.loader {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffcc00;
+    padding: 20px;
+  }
+  
+  .error {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding: 20px;
+  }

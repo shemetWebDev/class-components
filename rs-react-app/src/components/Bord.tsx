@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import './styles/Bord.css';
 interface BordProps {
   listPokemons: { name: string; description?: string }[];
   isLoading: boolean;
@@ -9,7 +10,7 @@ class Bord extends Component<BordProps> {
   render(): JSX.Element {
     const { listPokemons, isLoading, error } = this.props;
     if (isLoading) {
-      return <p>Загрузка...</p>;
+      return <p className="loader">Загрузка...</p>;
     }
 
     if (error) {

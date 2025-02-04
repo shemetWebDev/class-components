@@ -47,7 +47,9 @@ class App extends Component<Record<string, never>, AppState> {
           );
         }
 
-        this.setState({ listPokemons: filteredPokemons, isLoading: false });
+        setTimeout(() => {
+          this.setState({ listPokemons: filteredPokemons, isLoading: false });
+        }, 1000);
       })
       .catch((error) => {
         this.setState({ error: error.message, isLoading: false });
