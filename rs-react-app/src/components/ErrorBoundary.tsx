@@ -13,7 +13,7 @@ class ErrorBoundary extends Component<
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(): ErrorBoundaryState {
     return { hasError: true };
   }
 
@@ -21,7 +21,7 @@ class ErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="error">
-          <h2>Возникла ошибка не волнуйтесь и попробуйте снова</h2>
+          <h2>Возникла ошибка, не волнуйтесь и попробуйте снова</h2>
           <button onClick={() => this.setState({ hasError: false })}>
             Попробовать снова
           </button>

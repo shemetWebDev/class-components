@@ -17,8 +17,8 @@ interface AppState {
   firstSearch: boolean;
 }
 
-class App extends Component<{}, AppState> {
-  constructor(props: {}) {
+class App extends Component<Record<string, never>, AppState> {
+  constructor(props: Record<string, never>) {
     super(props);
     this.state = {
       listPokemons: [],
@@ -47,7 +47,6 @@ class App extends Component<{}, AppState> {
           );
         }
 
-        // Обновляем состояние с результатами
         this.setState({ listPokemons: filteredPokemons, isLoading: false });
       })
       .catch((error) => {
