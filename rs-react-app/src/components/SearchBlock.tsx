@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import './styles/SearchBlock.css';
 
 interface SearchProps {
@@ -15,8 +15,8 @@ class SearchBlock extends Component<SearchProps, SearchState> {
   constructor(props: SearchProps) {
     super(props);
     this.state = {
-      query: '',
-      searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'), // Загружаем историю из localStorage
+      query: localStorage.getItem('searchQuery') || '',
+      searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
       showHistory: false,
     };
   }
@@ -36,7 +36,6 @@ class SearchBlock extends Component<SearchProps, SearchState> {
     }
 
     localStorage.setItem('searchQuery', trimmedQuery);
-    this.setState({ query: '', showHistory: false });
     this.props.onSearch(trimmedQuery);
   };
 
@@ -55,12 +54,7 @@ class SearchBlock extends Component<SearchProps, SearchState> {
     this.setState({ showHistory: show });
   };
 
-  componentDidMount() {
-    localStorage.removeItem('searchQuery');
-    localStorage.removeItem('searchHistory');
-  }
-
-  render(): JSX.Element {
+  render() {
     const { query, searchHistory, showHistory } = this.state;
 
     return (
@@ -69,14 +63,15 @@ class SearchBlock extends Component<SearchProps, SearchState> {
           <div className="search-history">
             <h4>История запросов:</h4>
             <ul>
-              {searchHistory.map((item, index) => (
-                <li key={index} onClick={() => this.handleHistoryClick(item)}>
+              {searchHistory.map((item) => (
+                <li key={item} onClick={() => this.handleHistoryClick(item)}>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
         )}
+
         <input
           type="text"
           value={query}
