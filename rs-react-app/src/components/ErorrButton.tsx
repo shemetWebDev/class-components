@@ -1,30 +1,26 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import './styles/ErorrButton.css';
 
-class ErrorButton extends Component {
-  state = {
-    errorState: false,
+const ErrorButton = () => {
+  const [errorState, setErrorState] = useState(false);
+
+  const handleClick = () => {
+    setErrorState(true);
   };
 
-  handleClick = () => {
-    this.setState({ errorState: true });
-  };
+  if (errorState) {
+    throw new Error('Fake Error');
+  }
 
-  render() {
-    if (this.state.errorState) {
-      throw new Error('Fake Error');
-    }
-
-    return (
-      <div className="error-section">
-        <div className="error">
-          <div className="error-button" onClick={this.handleClick}>
-            <div className="error-button-text">Show Error</div>
-          </div>
+  return (
+    <div className="error-section">
+      <div className="error">
+        <div className="error-button" onClick={handleClick}>
+          <div className="error-button-text">Show Error</div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default ErrorButton;

@@ -1,7 +1,7 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
+import ErrorBoundary from './ErrorBoundary';
 import SearchBlock from './SearchBlock';
 import Bord from './Bord';
-import ErrorBoundary from './ErrorBoundary';
 import ErrorButton from './ErorrButton';
 
 interface Pokemon {
@@ -14,20 +14,21 @@ interface MainState {
   firstSearch: boolean;
 }
 
-class Main extends Component<Record<string, never>, MainState> {
-  constructor(props: Record<string, never>) {
-    super(props);
-    this.state = {
-      listPokemons: [],
-      isLoading: false,
-      firstSearch: false,
-    };
-  }
+function Main() {
+  const [state, setState] = useState<MainState>({
+    listPokemons: [],
+    isLoading: false,
+    firstSearch: false,
+  });
 
-  fetchResults = (query: string = '') => {
-    this.setState({ isLoading: true, firstSearch: true });
+  function fetchResults(query: string = '') {
+    setState((prevState) => ({
+      ...prevState,
+      isLoading: true,
+      firstSearch: true,
+    }));
 
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=0`)
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=10&offset=0')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Ошибка запроса к API');
@@ -43,36 +44,33 @@ class Main extends Component<Record<string, never>, MainState> {
           );
         }
 
-        this.setState({ listPokemons: filteredPokemons, isLoading: false });
+        setState((prevState) => ({
+          ...prevState,
+          listPokemons: filteredPokemons,
+          isLoading: false,
+        }));
       })
       .catch(() => {
-        this.setState({ isLoading: false });
+        setState((prevState) => ({ ...prevState, isLoading: false }));
       });
-  };
+  }
 
-  componentDidMount() {
+  useEffect(() => {
     const savedQuery = localStorage.getItem('searchQuery') || '';
-    if (savedQuery) {
-      this.fetchResults(savedQuery);
-    } else {
-      this.fetchResults();
-    }
-  }
+    fetchResults(savedQuery);
+  }, []);
 
-  render() {
-    const { listPokemons, isLoading, firstSearch } = this.state;
-    return (
-      <>
-        <ErrorBoundary>
-          <SearchBlock onSearch={this.fetchResults} />
-          {firstSearch && (
-            <Bord listPokemons={listPokemons} isLoading={isLoading} />
-          )}
-          <ErrorButton />
-        </ErrorBoundary>
-      </>
-    );
-  }
+  return (
+    <>
+      <ErrorBoundary>
+        <SearchBlock onSearch={fetchResults} />
+        {state.firstSearch && (
+          <Bord listPokemons={state.listPokemons} isLoading={state.isLoading} />
+        )}
+        <ErrorButton />
+      </ErrorBoundary>
+    </>
+  );
 }
 
 export default Main;

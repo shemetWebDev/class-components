@@ -1,90 +1,85 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/SearchBlock.css';
 
 interface SearchProps {
   onSearch: (query: string) => void;
 }
 
-interface SearchState {
-  query: string;
-  searchHistory: string[];
-  showHistory: boolean;
-}
+const SearchBlock: React.FC<SearchProps> = (props) => {
+  const { onSearch } = props;
 
-class SearchBlock extends Component<SearchProps, SearchState> {
-  constructor(props: SearchProps) {
-    super(props);
-    this.state = {
-      query: localStorage.getItem('searchQuery') || '',
-      searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
-      showHistory: false,
-    };
+  const [query, setQuery] = useState<string>(
+    localStorage.getItem('searchQuery') || ''
+  );
+  const [searchHistory, setSearchHistory] = useState<string[]>(
+    JSON.parse(localStorage.getItem('searchHistory') || '[]')
+  );
+  const [showHistory, setShowHistory] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (query.trim()) {
+      localStorage.setItem('searchQuery', query.trim());
+    }
+  }, [query]);
+
+  useEffect(() => {
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+  }, [searchHistory]);
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    setQuery(event.target.value);
   }
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: event.target.value });
-  };
-
-  handleSearch = () => {
-    const { query, searchHistory } = this.state;
+  function handleSearch(): void {
     const trimmedQuery = query.trim();
-    console.log(localStorage);
-
     if (trimmedQuery && !searchHistory.includes(trimmedQuery)) {
       const newHistory = [...searchHistory, trimmedQuery];
-      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-      this.setState({ searchHistory: newHistory });
+      setSearchHistory(newHistory);
     }
-
-    localStorage.setItem('searchQuery', trimmedQuery);
-    this.props.onSearch(trimmedQuery);
-  };
-
-  handleReset = () => {
-    this.setState({ query: '', showHistory: false });
-    localStorage.removeItem('searchQuery');
-    this.props.onSearch('');
-  };
-
-  handleHistoryClick = (query: string) => {
-    this.setState({ query });
-    this.props.onSearch(query);
-  };
-
-  toggleHistory = (show: boolean) => {
-    this.setState({ showHistory: show });
-  };
-
-  render() {
-    const { query, searchHistory, showHistory } = this.state;
-
-    return (
-      <div className="search-bar">
-        {showHistory && searchHistory.length > 0 && (
-          <div className="search-history">
-            <h4>История запросов:</h4>
-            <ul>
-              {searchHistory.map((item) => (
-                <li key={item} onClick={() => this.handleHistoryClick(item)}>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <input
-          type="text"
-          value={query}
-          onChange={this.handleChange}
-          placeholder="Введите поисковый запрос..."
-          onFocus={() => this.toggleHistory(true)}
-        />
-        <button onClick={this.handleSearch}>Поиск</button>
-        <button onClick={this.handleReset}>Сброс</button>
-      </div>
-    );
+    onSearch(trimmedQuery);
   }
-}
+
+  function handleReset(): void {
+    setQuery('');
+    setShowHistory(false);
+    onSearch('');
+  }
+
+  function handleHistoryClick(query: string): void {
+    setQuery(query);
+    onSearch(query);
+  }
+
+  function toggleHistory(show: boolean): void {
+    setShowHistory(show);
+  }
+
+  return (
+    <div className="search-bar">
+      {showHistory && searchHistory.length > 0 && (
+        <div className="search-history">
+          <h4>История запросов:</h4>
+          <ul>
+            {searchHistory.map((item) => (
+              <li key={item} onClick={() => handleHistoryClick(item)}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <input
+        type="text"
+        value={query}
+        onChange={handleChange}
+        placeholder="Введите поисковый запрос..."
+        onFocus={() => toggleHistory(true)}
+      />
+      <button onClick={handleSearch}>Поиск</button>
+      <button onClick={handleReset}>Сброс</button>
+    </div>
+  );
+};
 
 export default SearchBlock;
