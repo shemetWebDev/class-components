@@ -1,7 +1,7 @@
 import CardList from './CardList';
 
 interface BordProps {
-  listPokemons: { name: string }[];
+  listPokemons: { name: string; url: string }[];
   isLoading: boolean;
 }
 

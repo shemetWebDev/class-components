@@ -1,10 +1,14 @@
+import { Link } from 'react-router-dom';
 interface CardProps {
   name: string;
+  url: string;
 }
 
-const Card = ({ name }: CardProps) => (
+const Card = ({ name, url }: CardProps) => (
   <div className="card">
-    <h3>{name}</h3>
+    <Link to={`/details/${url.split('/')[6]}`}>
+      <h3>{name}</h3>
+    </Link>
   </div>
 );
 
