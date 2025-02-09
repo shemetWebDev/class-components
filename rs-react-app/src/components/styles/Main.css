@@ -1,12 +1,21 @@
 
-
 .main-content{
     display: flex;
 }
+
+.left-section{
+border: 2px solid #ffcc00;
+background-color: #fff3cd;
+border-radius: 5px;
+width: 200px;
+}
+
 
 .right-section{
 display: flex;
 align-items: center;
 justify-content: center;
-width: 100%;
+width: 200px;
+height: 200px;
+margin-left: 200px;
 }

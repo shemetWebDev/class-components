@@ -29,7 +29,7 @@ const Details = () => {
   }, [id]);
 
   const handleClose = () => {
-    const searchParams = new URLSearchParams(location.search); // Получаем текущие параметры
+    const searchParams = new URLSearchParams(location.search);
     navigate(`/?${searchParams.toString()}`);
   };
 

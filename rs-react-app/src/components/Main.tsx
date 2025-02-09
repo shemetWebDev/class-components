@@ -28,7 +28,7 @@ function Main() {
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1', 10);
 
-  const fetchResults = (query: string = '') => {
+  const fetchResults = (query: string = '', page: number = 1) => {
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
@@ -65,17 +65,16 @@ function Main() {
         setState((prevState) => ({ ...prevState, isLoading: false }));
       });
   };
-
   useEffect(() => {
-    fetchResults(state.query); // Загружаем список с последним поиском
-  }, [page]);
+    const currentPage = parseInt(searchParams.get('page') || '1', 10);
+    fetchResults(state.query, currentPage);
+  }, [searchParams, state.query]);
 
   const closeDetails = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
-
-    if (target.closest('.card') || target.closest('.search-block')) return;
-
-    navigate(`/?page=${page}`);
+    if (target.closest('.search-bar')) {
+      navigate(`/?page=${page}`);
+    }
   };
 
   return (
