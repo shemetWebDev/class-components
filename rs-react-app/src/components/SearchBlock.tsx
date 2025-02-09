@@ -28,6 +28,7 @@ class SearchBlock extends Component<SearchProps, SearchState> {
   handleSearch = () => {
     const { query, searchHistory } = this.state;
     const trimmedQuery = query.trim();
+    console.log(localStorage);
 
     if (trimmedQuery && !searchHistory.includes(trimmedQuery)) {
       const newHistory = [...searchHistory, trimmedQuery];
