@@ -75,11 +75,15 @@
       "jsx"
     ],
     "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
+      "^.+\\.(ts|tsx)$": "ts-jest",
+      "^.+\\.css$": "jest-transform-css"
     },
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/setupTests.ts"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@testing-library/react|jest)/"
     ]
   }
 }
